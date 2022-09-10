@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MongoDotNet.API.Data.Repositories;
 using MongoDotNet.API.Domain.Enums;
 using MongoDotNet.API.Dtos;
 
@@ -8,6 +9,13 @@ namespace MongoDotNet.API.Controllers
     [ApiController]
     public class RestauranteController : ControllerBase
     {
+        private readonly IRestauranteRepository _restauranteRepository;
+
+        public RestauranteController(IRestauranteRepository restauranteRepository)
+        {
+            _restauranteRepository = restauranteRepository;
+        }
+
         [HttpPost("novo-restaurante")]
         public ActionResult AdicionarRestaurante([FromBody] NovoRestauranteDto novoRestauranteDto)
         {
