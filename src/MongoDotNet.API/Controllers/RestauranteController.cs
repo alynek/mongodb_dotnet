@@ -34,5 +34,21 @@ namespace MongoDotNet.API.Controllers
             _restauranteRepository.Inserir(restaurante);
             return Ok(new { data = "Restaurante inserido com sucesso" });
         }
+
+        [HttpGet("restaurante/todos")]
+        public async Task<ActionResult> ObterRestaurantes()
+        {
+            var restaurantes = await _restauranteRepository.ObterTodos();
+
+            var restaurateDto = restaurantes.Select(_ => new RestauranteLeituraDto
+            {
+                Id = _.Id,
+                Nome = _.Nome,
+                TipoComida = _.TipoComida.ToString(),
+                Cidade = _.Endereco.Cidade
+            });
+
+            return Ok(new { data = restaurateDto });
+        }
     }
 }
