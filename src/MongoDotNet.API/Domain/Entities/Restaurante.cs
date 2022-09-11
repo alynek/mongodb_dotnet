@@ -9,7 +9,7 @@ namespace MongoDotNet.API.Domain.Entities
     {
         public string Id { get; private set; }
         public string Nome { get; private set; }
-        public ETipoDeComida Cozinha { get; private set; }
+        public ETipoDeComida TipoComida { get; private set; }
 
         public Endereco Endereco { get; private set; }
 
@@ -18,14 +18,14 @@ namespace MongoDotNet.API.Domain.Entities
         public Restaurante(string nome, ETipoDeComida cozinha)
         {
             Nome = nome;
-            Cozinha = cozinha;
+            TipoComida = cozinha;
         }
 
         public Restaurante(string id, string nome, ETipoDeComida cozinha)
         {
             Id = id;
             Nome = nome;
-            Cozinha = cozinha;
+            TipoComida = cozinha;
         }
 
         public void AtribuirEndereco(Endereco endereco)
