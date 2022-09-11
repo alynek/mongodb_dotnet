@@ -7,5 +7,7 @@ namespace MongoDotNet.API.Data.Repositories
         public void Inserir(Restaurante restaurante);
 
         public Task<IEnumerable<Restaurante>> ObterTodos();
+
+        public Restaurante ObterPorId(string id);
     }
 }

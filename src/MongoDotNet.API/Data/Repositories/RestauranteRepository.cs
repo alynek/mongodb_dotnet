@@ -49,5 +49,12 @@ namespace MongoDotNet.API.Data.Repositories
 
             return restaurantes;
         }
+
+        public Restaurante ObterPorId(string id)
+        {
+            var restaurante = _restaurantes.AsQueryable().FirstOrDefault(_ => _.Id == id);
+
+            return restaurante?.ConverterParaDomain() ?? null;
+        }
     }
 }

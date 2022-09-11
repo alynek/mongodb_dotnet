@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDotNet.API.Data.Repositories;
 using MongoDotNet.API.Domain.Enums;
+using MongoDotNet.API.Domain.ValueObjects;
 using MongoDotNet.API.Dtos;
 
 namespace MongoDotNet.API.Controllers
@@ -40,7 +41,7 @@ namespace MongoDotNet.API.Controllers
         {
             var restaurantes = await _restauranteRepository.ObterTodos();
 
-            var restaurateDto = restaurantes.Select(_ => new RestauranteLeituraDto
+            var restaurateDto = restaurantes.Select(_ => new RestaurantesLeituraDto
             {
                 Id = _.Id,
                 Nome = _.Nome,
@@ -50,5 +51,38 @@ namespace MongoDotNet.API.Controllers
 
             return Ok(new { data = restaurateDto });
         }
+
+        [HttpGet("restaurante/{id}")]
+        public ActionResult ObterRestaurante(string id)
+        {
+            if(IdNaoEhValido(id)) return BadRequest();
+
+            var restaurante = _restauranteRepository.ObterPorId(id);
+
+            if (restaurante is null) return NotFound();
+
+            var restauranteDto = new RestauranteLeituraDto
+            {
+                Id = restaurante.Id,
+                Nome = restaurante.Nome,
+                TipoComida = restaurante.TipoComida.ToString(),
+                Endereco = new EnderecoLeituraDto
+                {
+                    Logradouro = restaurante.Endereco.Logradouro,
+                    Numero = restaurante.Endereco.Numero,
+                    Cidade = restaurante.Endereco.Cidade,
+                    Cep = restaurante.Endereco.Cep,
+                    UF = restaurante.Endereco.UF
+                }
+            };
+
+            return Ok(restauranteDto);
+        }
+
+        private bool IdNaoEhValido(string id)
+        {
+            int tamanhoCorretoDoId = 24;
+            return id.Length != tamanhoCorretoDoId;
+        } 
     }
 }
