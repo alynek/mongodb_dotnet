@@ -13,7 +13,13 @@
     {
         public static ETipoDeComida ConverterDeInteiro(int valor)
         {
-            if (Enum.TryParse(valor.ToString(), out ETipoDeComida tipoDeComida)) return tipoDeComida;
+
+            if (Enum.TryParse(valor.ToString(), out ETipoDeComida tipoComida))
+                if (Enum.IsDefined(typeof(ETipoDeComida), tipoComida))
+                {
+                    Console.WriteLine(tipoComida);
+                    return tipoComida;
+                }  
 
             throw new ArgumentOutOfRangeException("Não foi possível converter de int para enum");
         }
