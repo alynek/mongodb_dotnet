@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoDotNet.API.Data.Schemas;
 using MongoDotNet.API.Domain.Entities;
+using MongoDotNet.API.Domain.ValueObjects;
 
 namespace MongoDotNet.API.Data.Repositories
 {
@@ -18,7 +19,7 @@ namespace MongoDotNet.API.Data.Repositories
             var novoRestaurante = new RestauranteSchema
             {
                 Nome = restaurante.Nome,
-                TipoDeComida = restaurante.Cozinha,
+                TipoDeComida = restaurante.TipoComida,
                 Endereco = new EnderecoSchema
                 {
                     Logradouro = restaurante.Endereco.Logradouro,
@@ -30,6 +31,23 @@ namespace MongoDotNet.API.Data.Repositories
             };
 
             _restaurantes.InsertOne(novoRestaurante);
+        }
+
+        public async Task<IEnumerable<Restaurante>> ObterTodos()
+        {
+            var restaurantes = new HashSet<Restaurante>();
+
+            await _restaurantes.AsQueryable().ForEachAsync(schema =>
+            {
+                var restaurante = new Restaurante(schema.Id, schema.Nome, schema.TipoDeComida);
+                var endereco = new Endereco(schema.Endereco.Logradouro, schema.Endereco.Numero, 
+                    schema.Endereco.Cidade, schema.Endereco.UF, schema.Endereco.Cep);
+
+                restaurante.AtribuirEndereco(endereco);
+                restaurantes.Add(restaurante);
+            });
+
+            return restaurantes;
         }
     }
 }
