@@ -16,7 +16,7 @@ namespace MongoDotNet.API.Controllers
             _restauranteRepository = restauranteRepository;
         }
 
-        [HttpPost("novo-restaurante")]
+        [HttpPost("novo")]
         public ActionResult AdicionarRestaurante([FromBody] NovoRestauranteDto novoRestauranteDto)
         {
             var tipoComida = TipoDeComidaHelper.ConverterDeInteiro(novoRestauranteDto.TipoDeComida);
@@ -35,7 +35,7 @@ namespace MongoDotNet.API.Controllers
             return Ok(new { data = "Restaurante inserido com sucesso" });
         }
 
-        [HttpGet("restaurante/todos")]
+        [HttpGet("todos")]
         public async Task<ActionResult> ObterRestaurantes()
         {
             var restaurantes = await _restauranteRepository.ObterTodos();
@@ -51,7 +51,7 @@ namespace MongoDotNet.API.Controllers
             return Ok(new { data = restaurateDto });
         }
 
-        [HttpGet("restaurante/{id}")]
+        [HttpGet("{id}")]
         public ActionResult ObterRestaurante(string id)
         {
             if (IdNaoEhValido(id)) return BadRequest();
@@ -93,6 +93,22 @@ namespace MongoDotNet.API.Controllers
 
             if (!_restauranteRepository.AlterarRestaurante(restaurante)) return BadRequest("Nenhum restaurante foi alterado");
             return Ok(new { data = "Restaurante alterado com sucesso!" });
+        }
+
+        [HttpGet]
+        public ActionResult BuscarRestaurantePorNome([FromQuery] string nome)
+        {
+            var restaurantes = _restauranteRepository.ObterPorNome(nome);
+
+            var restaurantesDto = restaurantes.Select(_ => new RestaurantesLeituraDto
+            {
+                Id = _.Id,
+                Nome = _.Nome,
+                TipoComida = _.TipoComida.ToString(),
+                Cidade = _.Endereco.Cidade
+            });
+
+            return Ok(restaurantesDto);
         }
 
         private bool IdNaoEhValido(string id)

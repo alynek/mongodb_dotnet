@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using MongoDotNet.API.Data.Schemas;
 using MongoDotNet.API.Domain.Entities;
 using MongoDotNet.API.Domain.ValueObjects;
@@ -56,6 +57,18 @@ namespace MongoDotNet.API.Data.Repositories
 
             var resultado = _restaurantes.ReplaceOne(_ => _.Id == novoRestaurante.Id, novoRestaurante);
             return resultado.ModifiedCount > 0;
+        }
+
+        public IEnumerable<Restaurante> ObterPorNome(string nome)
+        {
+            var restaurantes = new HashSet<Restaurante>();
+
+            _restaurantes.AsQueryable()
+                .Where(r => r.Nome.ToLower().Contains(nome.ToLower()))
+                .ToList()
+                .ForEach(r => restaurantes.Add(r.ConverterParaDomain()));
+
+            return restaurantes;
         }
     }
 }
