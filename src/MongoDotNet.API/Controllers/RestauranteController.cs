@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDotNet.API.Data.Repositories;
 using MongoDotNet.API.Domain.Enums;
-using MongoDotNet.API.Domain.ValueObjects;
 using MongoDotNet.API.Dtos;
 
 namespace MongoDotNet.API.Controllers
@@ -55,7 +54,7 @@ namespace MongoDotNet.API.Controllers
         [HttpGet("restaurante/{id}")]
         public ActionResult ObterRestaurante(string id)
         {
-            if(IdNaoEhValido(id)) return BadRequest();
+            if (IdNaoEhValido(id)) return BadRequest();
 
             var restaurante = _restauranteRepository.ObterPorId(id);
 
@@ -79,10 +78,27 @@ namespace MongoDotNet.API.Controllers
             return Ok(restauranteDto);
         }
 
+        [HttpPut("restaurante")]
+        public ActionResult AlterarRestaurante([FromBody] RestauranteAlteracaoDto restauranteDto)
+        {
+            if (restauranteDto is null) return NotFound();
+            if (IdNaoEhValido(restauranteDto.Id)) return BadRequest();
+
+            var restaurante = restauranteDto.NovoRestaurante();
+
+            if (!restaurante.Validar()) return BadRequest(new
+            {
+                errors = restaurante.ValidationResult.Errors.Select(_ => _.ErrorMessage)
+            });
+
+            if (!_restauranteRepository.AlterarRestaurante(restaurante)) return BadRequest("Nenhum restaurante foi alterado");
+            return Ok(new { data = "Restaurante alterado com sucesso!" });
+        }
+
         private bool IdNaoEhValido(string id)
         {
             int tamanhoCorretoDoId = 24;
             return id.Length != tamanhoCorretoDoId;
-        } 
+        }
     }
 }

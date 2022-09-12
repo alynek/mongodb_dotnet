@@ -12,7 +12,22 @@ namespace MongoDotNet.API.Data.Schemas
         public string Id { get; set; }
         public string Nome { get; set; }
         public ETipoDeComida TipoDeComida { get; set; }
-        public EnderecoSchema Endereco{ get; set; }
+        public EnderecoSchema Endereco { get; set; }
+
+        public RestauranteSchema(string nome, ETipoDeComida tipoDeComida, EnderecoSchema endereco)
+        {
+            Nome = nome;
+            TipoDeComida = tipoDeComida;
+            Endereco = endereco;
+        }
+
+        public RestauranteSchema(string id, string nome, ETipoDeComida tipoDeComida, EnderecoSchema endereco)
+        {
+            Id = id;
+            Nome = nome;
+            TipoDeComida = tipoDeComida;
+            Endereco = endereco;
+        }
 
         public Restaurante ConverterParaDomain()
         {

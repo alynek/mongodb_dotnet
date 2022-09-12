@@ -16,19 +16,10 @@ namespace MongoDotNet.API.Data.Repositories
 
         public void Inserir(Restaurante restaurante)
         {
-            var novoRestaurante = new RestauranteSchema
-            {
-                Nome = restaurante.Nome,
-                TipoDeComida = restaurante.TipoComida,
-                Endereco = new EnderecoSchema
-                {
-                    Logradouro = restaurante.Endereco.Logradouro,
-                    Numero = restaurante.Endereco.Numero,
-                    Cidade = restaurante.Endereco.Cidade,
-                    Cep = restaurante.Endereco.Cep,
-                    UF = restaurante.Endereco.UF
-                }
-            };
+            var novoRestaurante = new RestauranteSchema(restaurante.Nome, restaurante.TipoComida,
+                new EnderecoSchema(restaurante.Endereco.Logradouro, restaurante.Endereco.Numero,
+                    restaurante.Endereco.Cidade, restaurante.Endereco.UF, restaurante.Endereco.Cep)
+            );
 
             _restaurantes.InsertOne(novoRestaurante);
         }
@@ -40,7 +31,7 @@ namespace MongoDotNet.API.Data.Repositories
             await _restaurantes.AsQueryable().ForEachAsync(schema =>
             {
                 var restaurante = new Restaurante(schema.Id, schema.Nome, schema.TipoDeComida);
-                var endereco = new Endereco(schema.Endereco.Logradouro, schema.Endereco.Numero, 
+                var endereco = new Endereco(schema.Endereco.Logradouro, schema.Endereco.Numero,
                     schema.Endereco.Cidade, schema.Endereco.UF, schema.Endereco.Cep);
 
                 restaurante.AtribuirEndereco(endereco);
@@ -55,6 +46,16 @@ namespace MongoDotNet.API.Data.Repositories
             var restaurante = _restaurantes.AsQueryable().FirstOrDefault(_ => _.Id == id);
 
             return restaurante?.ConverterParaDomain() ?? null;
+        }
+
+        public bool AlterarRestaurante(Restaurante restaurante)
+        {
+            var novoRestaurante = new RestauranteSchema(restaurante.Id, restaurante.Nome, restaurante.TipoComida,
+                new EnderecoSchema(restaurante.Endereco.Logradouro, restaurante.Endereco.Numero,
+                    restaurante.Endereco.Cidade, restaurante.Endereco.UF, restaurante.Endereco.Cep));
+
+            var resultado = _restaurantes.ReplaceOne(_ => _.Id == novoRestaurante.Id, novoRestaurante);
+            return resultado.ModifiedCount > 0;
         }
     }
 }

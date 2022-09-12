@@ -7,5 +7,14 @@
         public string Cidade { get; set; }
         public string UF { get; set; }
         public string Cep { get; set; }
+
+        public EnderecoSchema(string logradouro, string numero, string cidade, string uF, string cep)
+        {
+            Logradouro = logradouro;
+            Numero = numero;
+            Cidade = cidade;
+            UF = uF;
+            Cep = cep;
+        }
     }
 }

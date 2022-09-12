@@ -9,5 +9,6 @@ namespace MongoDotNet.API.Data.Repositories
         public Task<IEnumerable<Restaurante>> ObterTodos();
 
         public Restaurante ObterPorId(string id);
+        public bool AlterarRestaurante(Restaurante restaurante);
     }
 }
