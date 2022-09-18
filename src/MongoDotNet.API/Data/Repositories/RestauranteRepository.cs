@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using MongoDotNet.API.Data.Schemas;
 using MongoDotNet.API.Domain.Entities;
 using MongoDotNet.API.Domain.ValueObjects;
@@ -9,10 +8,12 @@ namespace MongoDotNet.API.Data.Repositories
     public class RestauranteRepository : IRestauranteRepository
     {
         IMongoCollection<RestauranteSchema> _restaurantes;
+        IMongoCollection<AvaliacaoSchema> _avaliacoes;
 
         public RestauranteRepository(MongoDB mongoDB)
         {
             _restaurantes = mongoDB.MongoDatabase.GetCollection<RestauranteSchema>("restaurantes");
+            _avaliacoes = mongoDB.MongoDatabase.GetCollection<AvaliacaoSchema>("avaliacoes");
         }
 
         public void Inserir(Restaurante restaurante)
@@ -69,6 +70,48 @@ namespace MongoDotNet.API.Data.Repositories
                 .ForEach(r => restaurantes.Add(r.ConverterParaDomain()));
 
             return restaurantes;
+        }
+
+        public void Avaliar(string restauranteId, Avaliacao avaliacao)
+        {
+            var avaliacaoSchema = new AvaliacaoSchema
+            {
+                RestauranteId = restauranteId,
+                Estrelas = avaliacao.Estrelas,
+                Comentario = avaliacao.Comentario
+            };
+
+            _avaliacoes.InsertOne(avaliacaoSchema);
+        }
+
+        public Dictionary<Restaurante, double> ObterTop3()
+        {
+            var retorno = new Dictionary<Restaurante, double>();
+
+            var top3Avaliacoes = _avaliacoes.AsQueryable()
+                    .GroupBy(r => r.RestauranteId)
+                    .Select(_ => new
+                        {
+                            RestauranteId = _.Key,
+                            MediaEstrelas = _.Average(_ => _.Estrelas)
+                        })
+                    .OrderByDescending(m => m.MediaEstrelas)
+                    .Take(3)
+                    .ToList();
+
+            top3Avaliacoes.ForEach(item =>
+            {
+                var restaurante = ObterPorId(item.RestauranteId);
+
+                _avaliacoes.AsQueryable()
+                .Where(_ => _.RestauranteId == item.RestauranteId)
+                .ToList()
+                .ForEach(a => restaurante.InserirAvaliacao(a.ConverterParaDomain()));
+
+                retorno.Add(restaurante, item.MediaEstrelas);
+            });
+
+            return retorno;
         }
     }
 }
