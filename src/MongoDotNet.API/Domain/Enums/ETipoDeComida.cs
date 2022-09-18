@@ -21,7 +21,7 @@
                     return tipoComida;
                 }  
 
-            throw new ArgumentOutOfRangeException("Não foi possível converter de int para enum");
+            throw new ArgumentException("Não foi possível converter de int para enum");
         }
     }
 }

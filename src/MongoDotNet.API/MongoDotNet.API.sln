@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDotNet.API", "MongoDotNet.API.csproj", "{B03AAB0F-4672-458F-88D6-64EF039AB8ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDotNet.Tests", "..\MongoDotNet.Tests\MongoDotNet.Tests.csproj", "{00427880-C1FC-4DB4-98E0-017C5271094D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B03AAB0F-4672-458F-88D6-64EF039AB8ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B03AAB0F-4672-458F-88D6-64EF039AB8ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B03AAB0F-4672-458F-88D6-64EF039AB8ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00427880-C1FC-4DB4-98E0-017C5271094D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00427880-C1FC-4DB4-98E0-017C5271094D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00427880-C1FC-4DB4-98E0-017C5271094D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00427880-C1FC-4DB4-98E0-017C5271094D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
