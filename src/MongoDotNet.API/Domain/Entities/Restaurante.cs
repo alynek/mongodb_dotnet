@@ -10,6 +10,7 @@ namespace MongoDotNet.API.Domain.Entities
         public string Id { get; private set; }
         public string Nome { get; private set; }
         public ETipoDeComida TipoComida { get; private set; }
+        public List<Avaliacao> Avaliacoes { get; private set; }
 
         public Endereco Endereco { get; private set; }
 
@@ -19,6 +20,7 @@ namespace MongoDotNet.API.Domain.Entities
         {
             Nome = nome;
             TipoComida = cozinha;
+            Avaliacoes = new List<Avaliacao>();
         }
 
         public Restaurante(string id, string nome, ETipoDeComida cozinha)
@@ -26,11 +28,17 @@ namespace MongoDotNet.API.Domain.Entities
             Id = id;
             Nome = nome;
             TipoComida = cozinha;
+            Avaliacoes = new List<Avaliacao>();
         }
 
         public void AtribuirEndereco(Endereco endereco)
         {
             Endereco = endereco;
+        }
+
+        public void InserirAvaliacao(Avaliacao avaliacao)
+        {
+            Avaliacoes.Add(avaliacao);
         }
 
         public bool Validar()
