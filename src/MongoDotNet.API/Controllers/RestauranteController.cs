@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDotNet.API.Data.Repositories;
 using MongoDotNet.API.Domain.Enums;
+using MongoDotNet.API.Domain.ValueObjects;
 using MongoDotNet.API.Dtos;
 
 namespace MongoDotNet.API.Controllers
@@ -109,6 +110,41 @@ namespace MongoDotNet.API.Controllers
             });
 
             return Ok(restaurantesDto);
+        }
+
+        [HttpPatch("{id}/avaliar")]
+        public ActionResult AvaliarRestaurante(string id, [FromBody] AvaliacaoInclusao avaliacaoInclusao)
+        {
+            if (IdNaoEhValido(id)) return BadRequest();
+
+            var restaurante = _restauranteRepository.ObterPorId(id);
+            if (restaurante is null) return NotFound();
+
+            var avaliacao = new Avaliacao(avaliacaoInclusao.Estrelas, avaliacaoInclusao.Comentario);
+            if (!avaliacao.Validar())
+            {
+                return BadRequest(new { errors = avaliacao.ValidationResult.Errors.Select(_ => _.ErrorMessage) });
+            }
+
+            _restauranteRepository.Avaliar(restaurante.Id, avaliacao);
+            return Ok("Restaurante avaliado com sucesso");
+        }
+
+        [HttpGet("restaurante/top3")]
+        public ActionResult ObterTop3Restaurantes()
+        {
+            var top3 = _restauranteRepository.ObterTop3();
+
+            var restauranteTop3 = top3.Select(_ => new RestauranteTop3Dto
+            {
+                Id = _.Key.Id,
+                Nome = _.Key.Nome,
+                Cozinha = (int)_.Key.TipoComida,
+                Cidade = _.Key.Endereco.Cidade,
+                Estrelas = _.Value
+            });
+
+            return Ok(restauranteTop3);
         }
 
         private bool IdNaoEhValido(string id)
