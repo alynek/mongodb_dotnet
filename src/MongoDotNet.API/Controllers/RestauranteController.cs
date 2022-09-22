@@ -147,6 +147,20 @@ namespace MongoDotNet.API.Controllers
             return Ok(restauranteTop3);
         }
 
+        [HttpDelete("Restaurante/{id}")]
+        public ActionResult Remover(string id)
+        {
+            if(IdNaoEhValido(id)) return BadRequest();
+
+            var restaurante = _restauranteRepository.ObterPorId(id);
+
+            if (restaurante is null) return NotFound();
+
+            (var totalAvaliacoesRemovidas , var totalRestauranteRemovido) = _restauranteRepository.Remover(id);
+
+            return Ok($"$Total de exclusões: {totalRestauranteRemovido} restaurante com {totalAvaliacoesRemovidas} avaliações");
+        }
+
         private bool IdNaoEhValido(string id)
         {
             int tamanhoCorretoDoId = 24;

@@ -113,5 +113,13 @@ namespace MongoDotNet.API.Data.Repositories
 
             return retorno;
         }
+
+        public (long, long) Remover(string restauranteId)
+        {
+            var resultadosAvaliacoes = _avaliacoes.DeleteMany(_ => _.RestauranteId.Equals(restauranteId));
+            var resultadoRestaurante = _restaurantes.DeleteOne(_ => _.Id.Equals(restauranteId));
+
+            return (resultadosAvaliacoes.DeletedCount, resultadoRestaurante.DeletedCount);
+        }
     }
 }

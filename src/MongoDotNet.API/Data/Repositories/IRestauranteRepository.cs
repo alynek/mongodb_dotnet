@@ -18,5 +18,7 @@ namespace MongoDotNet.API.Data.Repositories
         public void Avaliar(string restauranteId, Avaliacao avaliacao);
 
         public Dictionary<Restaurante, double> ObterTop3();
+
+        public (long, long) Remover(string restauranteId);
     }
 }
